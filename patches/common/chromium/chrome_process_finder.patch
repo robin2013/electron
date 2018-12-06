@@ -11,10 +11,10 @@ Fix some problems when using app.makeSingleInstance on POSIX systems
 Reference: https://github.com/electron/electron/pull/3175
 
 diff --git a/chrome/browser/win/chrome_process_finder.cc b/chrome/browser/win/chrome_process_finder.cc
-index 4fdea2af27020303a66a747304c5ecce5cc698d5..598ba8171631dbcf7ad23bc4b5c74a750bbaa47c 100644
+index b29490a20056df75cf3895e6da9d757b4da2241c..e35ffda03d5992db516112afd215bf82348fd6de 100644
 --- a/chrome/browser/win/chrome_process_finder.cc
 +++ b/chrome/browser/win/chrome_process_finder.cc
-@@ -43,15 +43,6 @@ NotifyChromeResult AttemptToNotifyRunningChrome(HWND remote_window,
+@@ -44,15 +44,6 @@ NotifyChromeResult AttemptToNotifyRunningChrome(HWND remote_window,
    if (!thread_id || !process_id)
      return NOTIFY_FAILED;
  
@@ -30,7 +30,7 @@ index 4fdea2af27020303a66a747304c5ecce5cc698d5..598ba8171631dbcf7ad23bc4b5c74a75
    // Send the command line to the remote chrome window.
    // Format is "START\0<<<current directory>>>\0<<<commandline>>>".
    std::wstring to_send(L"START\0", 6);  // want the NULL in the string.
-@@ -60,7 +51,7 @@ NotifyChromeResult AttemptToNotifyRunningChrome(HWND remote_window,
+@@ -61,7 +52,7 @@ NotifyChromeResult AttemptToNotifyRunningChrome(HWND remote_window,
      return NOTIFY_FAILED;
    to_send.append(cur_dir.value());
    to_send.append(L"\0", 1);  // Null separator.
