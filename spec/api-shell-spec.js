@@ -35,7 +35,6 @@ describe('shell module', () => {
       if (process.platform !== 'linux') this.skip()
 
       process.env.DE = 'generic'
-      process.env.DISPLAY = ''
       const tests = [
         { BROWSER: '/bin/true', expected: true },
         { BROWSER: '/bin/false', expected: false }
@@ -43,6 +42,7 @@ describe('shell module', () => {
 
       for (const test of tests) {
         const { BROWSER, expected } = test
+        process.env.DISPLAY = ''
         process.env.BROWSER = BROWSER
         const actual = shell.openExternalSync('http://www.example.com')
         assert.strictEqual(expected, actual)
