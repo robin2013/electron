@@ -16,14 +16,45 @@ describe('shell module', () => {
     iconIndex: 1
   }
 
-  // (alexeykuzmin): `.skip()` in `before` doesn't work for nested `describe`s.
-  beforeEach(function () {
-    if (process.platform !== 'win32') {
-      this.skip()
-    }
+  describe('shell.openExternal()', () => {
+    it('opens an external link', function (done) {
+      if (process.platform !== 'linux') this.skip()
+
+      // set env vars for xdg-open
+      const url = 'http://www.example.com'
+      process.env.DE = 'generic'
+      process.env.BROWSER = '/bin/true'
+      process.env.DISPLAY = ''
+
+      shell.openExternal(url).then(() => done())
+    })
+  })
+
+  describe('shell.openExternalSync()', () => {
+    it('opens an external link', function () {
+      if (process.platform !== 'linux') this.skip()
+
+      process.env.DE = 'generic'
+      process.env.DISPLAY = ''
+      const tests = [
+        { BROWSER: '/bin/true', expected: true },
+        { BROWSER: '/bin/false', expected: false }
+      ]
+
+      for (const test of tests) {
+        const { BROWSER, expected } = test
+        process.env.BROWSER = BROWSER
+        const actual = shell.openExternalSync('http://www.example.com')
+        assert.strictEqual(expected, actual)
+      }
+    })
   })
 
   describe('shell.readShortcutLink(shortcutPath)', () => {
+    beforeEach(function () {
+      if (process.platform !== 'win32') this.skip()
+    })
+
     it('throws when failed', () => {
       assert.throws(() => {
         shell.readShortcutLink('not-exist')
@@ -37,6 +68,10 @@ describe('shell module', () => {
   })
 
   describe('shell.writeShortcutLink(shortcutPath[, operation], options)', () => {
+    beforeEach(function () {
+      if (process.platform !== 'win32') this.skip()
+    })
+
     const tmpShortcut = path.join(os.tmpdir(), `${Date.now()}.lnk`)
 
     afterEach(() => {
